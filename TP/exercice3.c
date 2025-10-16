@@ -13,47 +13,68 @@
 #define   TASK_STACKSIZE       2048
 OS_STK    task1_stk[TASK_STACKSIZE];
 OS_STK    task2_stk[TASK_STACKSIZE];
+OS_STK    task3_stk[TASK_STACKSIZE];
 
-OS_EVENT *S1;
 
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      1
 #define TASK2_PRIORITY      2
+#define TASK3_PRIORITY      3
+
+
+void FoncU(void);
+void FoncV(void);
+void FoncW(void);
+void FoncX(void);
+void FoncY(void);
+void FoncZ(void);
+
+
 
 // Tache 1
 void task1(void* pdata)
 {
-  INT8U err;
   while (1)
   { 
-    for(int i=0; i<10; i++){
-        OSSemPend(S1,0,err);
-        IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
-        usleep(100000);
-        OSSemPost(S1); 
-        OSTimeDlyHMSM(0, 0, 0, 500);   
-    }  
-    
+      FoncU();
+	  FoncX();
+	  OSTimeDlyHMSM(0, 0, 1, 0);
+         
   }
 }
 // Tache 2
 void task2(void* pdata)
 {
-  INT8U err;
+     
+    
   while (1)
   {   
-    for(int i=9; i>=0; i--){
-        OSSemPend(S1,0,err);
-        IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
-        usleep(100000);
-        OSSemPost(S1); 
-        OSTimeDlyHMSM(0, 0, 0, 500);
-    }
+    FoncV();
+	FoncZ();
+	OSTimeDlyHMSM(0, 0, 1, 0);
+    
+   }
+  
+}
+
+// Tache 3
+      
+
+void task3(void* pdata)
+{
+
+
+  while (1)
+  { 
+   FoncW();
+   FoncY();
+   OSTimeDlyHMSM(0, 0, 1, 0);
   }
   
 }
+
 
 
 int main(void)
@@ -61,7 +82,9 @@ int main(void)
     INT8U err;
       
     OSInit();  
+   
     
+   
       
     
   OSTaskCreateExt(task1,
@@ -73,7 +96,7 @@ int main(void)
                   TASK_STACKSIZE,
                   NULL,
                   0);
- S1=OSSemCreate(1);
+ 
  OSTaskCreateExt(task2,
                   NULL,
                   (void *)&task2_stk[TASK_STACKSIZE],
@@ -82,8 +105,17 @@ int main(void)
                   task2_stk,
                   TASK_STACKSIZE,
                   NULL,
-                  0);                   
-
+                  0);            
+               
+ OSTaskCreateExt(task3,
+                  NULL,
+                  (void *)&task3_stk[TASK_STACKSIZE],
+                  TASK3_PRIORITY,
+                  TASK3_PRIORITY,
+                  task3_stk,
+                  TASK_STACKSIZE,
+                  NULL,
+                  0);     
                     
   OSStart();
   return 0;
@@ -92,3 +124,32 @@ int main(void)
 
 
 
+void FoncU(void)
+{
+	printf("Je suis la tache U\n");
+}
+
+void FoncV(void)
+{
+	printf("Je suis la tache V\n");
+}
+
+void FoncW(void)
+{
+	printf("Je suis la tache W\n");
+}
+
+void FoncX(void)
+{
+	printf("Je suis la tache X\n");
+}
+
+void FoncY(void)
+{
+	printf("Je suis la tache Y\n");
+}
+
+void FoncZ(void)
+{
+	printf("Je suis la tache Z\n");
+}
