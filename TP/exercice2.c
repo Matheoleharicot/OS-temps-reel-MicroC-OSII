@@ -29,14 +29,15 @@ OS_STK    task2_stk[TASK_STACKSIZE];
 // Tache 1
 void task1(void* pdata)
 {
-  
+  INT8U err;
   while (1)
   { 
-    
+    OSSemPost(S1);
     for(int i=0; i<10; i++){
         IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
         OSTimeDlyHMSM(0, 0, 0, 500);
     }
+    OSSemPend(S2,0,err);
 	  OSTimeDlyHMSM(0, 0, 1, 0);
          
   }
@@ -44,19 +45,24 @@ void task1(void* pdata)
 // Tache 2
 void task2(void* pdata)
 {
-     
-    
+  INT8U err;
   while (1)
   {   
+    OSSemPost(S2);
+    for(int i=10; i>0; i--){
+          IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
+          OSTimeDlyHMSM(0, 0, 0, 500);
+    }
+    OSSemPend(S1,0,err);
+    OSTimeDlyHMSM(0, 0, 1, 0);
     
-	OSTimeDlyHMSM(0, 0, 1, 0);
-    
-   }
+  }
   
 }
 
 
-
+OS_EVENT *S1;
+OS_EVENT *S2;
 
 int main(void)
 {
@@ -75,7 +81,7 @@ int main(void)
                   TASK_STACKSIZE,
                   NULL,
                   0);
- 
+ S1=OSSemCreate(1);
  OSTaskCreateExt(task2,
                   NULL,
                   (void *)&task2_stk[TASK_STACKSIZE],
@@ -85,7 +91,7 @@ int main(void)
                   TASK_STACKSIZE,
                   NULL,
                   0);            
-               
+  S2=OSSemCreate(1);             
 
                     
   OSStart();
