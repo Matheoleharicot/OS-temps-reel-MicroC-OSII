@@ -15,17 +15,12 @@ OS_STK    task1_stk[TASK_STACKSIZE];
 OS_STK    task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *S1;
-OS_EVENT *S2;
 
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      1
 #define TASK2_PRIORITY      2
-
-
-
-
 
 // Tache 1
 void task1(void* pdata)
@@ -35,10 +30,12 @@ void task1(void* pdata)
   { 
     OSSemPend(S1,0,err);
     for(int i=0; i<10; i++){
+        OSSemPend(S1,0,err);
         IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
-        OSTimeDlyHMSM(0, 0, 0, 500);
+        OSSemPost(S1); 
+        OSTimeDlyHMSM(0, 0, 0, 500);   
     }  
-    OSSemPost(S2); 
+    
   }
 }
 // Tache 2
@@ -49,8 +46,10 @@ void task2(void* pdata)
   {   
     OSSemPend(S2,0,err);
     for(int i=10; i>0; i--){
-          IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
-          OSTimeDlyHMSM(0, 0, 0, 500);
+        OSSemPend(S1,0,err);
+        IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
+        OSSemPost(S1); 
+        OSTimeDlyHMSM(0, 0, 0, 500);
     }
     OSSemPost(S1);
   }
@@ -84,8 +83,7 @@ int main(void)
                   task2_stk,
                   TASK_STACKSIZE,
                   NULL,
-                  0);            
-  S2=OSSemCreate(1);             
+                  0);                   
 
                     
   OSStart();
