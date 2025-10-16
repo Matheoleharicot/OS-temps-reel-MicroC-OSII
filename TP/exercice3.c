@@ -46,7 +46,6 @@ void task1(void *pdata)
     OSSemPend(S1, 0, &err);
     FoncU();
     OSTimeDlyHMSM(0, 0, 0, 500);
-    OSSemPost(S2);
 
     OSSemPend(S1, 0, &err);
     FoncX();
@@ -63,12 +62,13 @@ void task2(void *pdata)
     OSSemPend(S2, 0, &err);
     FoncV();
     OSTimeDlyHMSM(0, 0, 0, 500);
-    OSSemPost(S3);
 
     OSSemPend(S2, 0, &err);
     FoncZ();
     OSTimeDlyHMSM(0, 0, 0, 500);
     OSSemPost(S1);
+    OSSemPost(S2);
+    OSSemPost(S3);
   }
 }
 
