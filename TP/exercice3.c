@@ -15,6 +15,10 @@ OS_STK    task1_stk[TASK_STACKSIZE];
 OS_STK    task2_stk[TASK_STACKSIZE];
 OS_STK    task3_stk[TASK_STACKSIZE];
 
+OS_EVENT *S1;
+OS_EVENT *S2;
+OS_EVENT *S3;
+
 
 
 /* Definition of Task Priorities */
@@ -34,45 +38,56 @@ void FoncZ(void);
 
 
 // Tache 1
-void task1(void* pdata)
+void task1(void *pdata)
 {
-  while (1)
-  { 
-      FoncU();
-	  FoncX();
-	  OSTimeDlyHMSM(0, 0, 1, 0);
-         
+  INT8U err;
+  while(1)
+  {
+    OSSemPend(S1, 0, &err);
+    FoncU();
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S2);
+
+    OSSemPend(S1, 0, &err);
+    FoncX();
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S3);
   }
 }
-// Tache 2
-void task2(void* pdata)
+
+void task2(void *pdata)
 {
-     
-    
-  while (1)
-  {   
+  INT8U err;
+  while(1)
+  {
+    OSSemPend(S2, 0, &err);
     FoncV();
-	FoncZ();
-	OSTimeDlyHMSM(0, 0, 1, 0);
-    
-   }
-  
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S3);
+
+    OSSemPend(S2, 0, &err);
+    FoncZ();
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S1);
+  }
 }
 
-// Tache 3
-      
 
-void task3(void* pdata)
+void task3(void *pdata)
 {
+  INT8U err;
+  while(1)
+  {
+    OSSemPend(S3, 0, &err);
+    FoncW();
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S1);
 
-
-  while (1)
-  { 
-   FoncW();
-   FoncY();
-   OSTimeDlyHMSM(0, 0, 1, 0);
+    OSSemPend(S3, 0, &err);
+    FoncY();
+    OSTimeDlyHMSM(0, 0, 0, 500);
+    OSSemPost(S2);
   }
-  
 }
 
 
@@ -84,8 +99,9 @@ int main(void)
     OSInit();  
    
     
-   
-      
+  S1=OSSemCreate(1);
+  S2=OSSemCreate(1);
+  S3=OSSemCreate(1);   
     
   OSTaskCreateExt(task1,
                   NULL,
