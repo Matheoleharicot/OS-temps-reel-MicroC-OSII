@@ -33,15 +33,12 @@ void task1(void* pdata)
   INT8U err;
   while (1)
   { 
-
+    OSSemPend(S1,0,err);
     for(int i=0; i<10; i++){
         IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
         OSTimeDlyHMSM(0, 0, 0, 500);
-    }
-    OSSemPend(S1,0,err);
-    OSSemPost(S2);
-	  OSTimeDlyHMSM(0, 0, 1, 0);
-         
+    }  
+    OSSemPost(S2); 
   }
 }
 // Tache 2
@@ -50,15 +47,12 @@ void task2(void* pdata)
   INT8U err;
   while (1)
   {   
-    
+    OSSemPend(S2,0,err);
     for(int i=10; i>0; i--){
           IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
           OSTimeDlyHMSM(0, 0, 0, 500);
     }
-    OSSemPend(S2,0,err);
     OSSemPost(S1);
-    OSTimeDlyHMSM(0, 0, 1, 0);
-    
   }
   
 }
