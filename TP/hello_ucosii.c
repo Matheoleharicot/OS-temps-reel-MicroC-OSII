@@ -49,6 +49,15 @@ void task1(void* pdata)
 {
   while (1)
   { 
+    OS_TCB task_data;
+    INT8U err, task_prio;
+    err = OSTaskQuery(OS_PRIO_SELF, &task_data);
+    if(err == OS_ERR_NONE) {
+      task_prio = task_data.OSTCBPrio;
+      printf("Task priority is %d\n", task_prio);
+    } else {
+      printf("Error in querying task data. Error code: %d\n", err);
+    }
     printf("Hello from task1\n");
     OSTimeDlyHMSM(0, 0, 3, 0);
   }
