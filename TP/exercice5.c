@@ -8,7 +8,7 @@
 
 #define TEMP_THRESHOLD 21
 alt_u8 celsius_lookup(int adc_avg_in); //enregistrer les temperatures dans une grande table
-
+void read_temperature ( void *pdata ) ;
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
 
@@ -39,4 +39,16 @@ alt_u8 celsius_lookup(int adc_avg_in)
 			  6, 5, 5, 4, 4, 3, 2, 2, 1, 1, 0 };
 
 	return (celsius_lookup_table[adc_avg_in]);
+}
+
+void read_temperature ( void *pdata ){
+	int adc_value;
+	for (int i = 0; i < 64; i++)
+	{
+		adc_value=IORD(MODULAR_ADC_0_SAMPLE_STORE_CSR_BASE, i );
+		adc_value = +adc_value;
+	}
+	adc_value = adc_value / 64;
+	alt_u8 temperature = celsius_lookup(adc_value);
+	printf("Temperature: %d C\n", temperature);
 }
