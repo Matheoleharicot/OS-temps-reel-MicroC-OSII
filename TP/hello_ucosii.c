@@ -40,6 +40,8 @@ OS_STK    task2_stk[TASK_STACKSIZE];
 
 #define TASK1_PRIORITY      1
 #define TASK2_PRIORITY      2
+#define TASK1_PRIORITY      3
+#define TASK1_PRIORITY      4
 
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata)
