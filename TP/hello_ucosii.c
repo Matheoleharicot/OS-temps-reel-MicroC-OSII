@@ -89,6 +89,8 @@ int main(void)
   printf("Email: sales@micrium.com\n");
   printf("URL: www.micrium.com\n\n\n");  
 
+  INT8U *err;
+
   OSTaskCreateExt(task1,
                   NULL,
                   (void *)&task1_stk[TASK_STACKSIZE-1],
@@ -119,7 +121,7 @@ int main(void)
                   TASK_STACKSIZE,
                   NULL,
                   0);
-  OSTaskCreateExt(task1,
+  err=OSTaskCreateExt(task1,
                   NULL,
                   (void *)&task4_stk[TASK_STACKSIZE-1],
                   TASK4_PRIORITY,
@@ -128,6 +130,8 @@ int main(void)
                   TASK_STACKSIZE,
                   NULL,
                   0);
+
+  printf("Error code from creating task4 is %d\n", err);
   OSStart();
   return 0;
 }
