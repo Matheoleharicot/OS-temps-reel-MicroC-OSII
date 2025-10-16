@@ -32,9 +32,10 @@ void task1(void* pdata)
   
   while (1)
   { 
-    #define LED_PIO_BASE 0x10001000
+    
     for(int i=0; i<10; i++){
-        IOWR_ALTERA_AVALON_PIO_DATA(LED_PIO_BASE, i);
+        IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
+        OSTimeDlyHMSM(0, 0, 0, 500);
     }
 	  OSTimeDlyHMSM(0, 0, 1, 0);
          
