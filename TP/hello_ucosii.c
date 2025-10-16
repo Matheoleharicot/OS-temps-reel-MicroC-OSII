@@ -35,13 +35,14 @@
 #define   TASK_STACKSIZE       2048
 OS_STK    task1_stk[TASK_STACKSIZE];
 OS_STK    task2_stk[TASK_STACKSIZE];
-
+OS_STK    task3_stk[TASK_STACKSIZE];
+OS_STK    task4_stk[TASK_STACKSIZE];
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      1
 #define TASK2_PRIORITY      2
-#define TASK1_PRIORITY      3
-#define TASK1_PRIORITY      4
+#define TASK3_PRIORITY      3
+#define TASK4_PRIORITY      4
 
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata)
@@ -96,6 +97,25 @@ int main(void)
                   TASK2_PRIORITY,
                   TASK2_PRIORITY,
                   task2_stk,
+                  TASK_STACKSIZE,
+                  NULL,
+                  0);
+
+  OSTaskCreateExt(task1,
+                  NULL,
+                  (void *)&task3_stk[TASK_STACKSIZE-1],
+                  TASK3_PRIORITY,
+                  TASK3_PRIORITY,
+                  task3_stk,
+                  TASK_STACKSIZE,
+                  NULL,
+                  0);
+  OSTaskCreateExt(task1,
+                  NULL,
+                  (void *)&task4_stk[TASK_STACKSIZE-1],
+                  TASK4_PRIORITY,
+                  TASK4_PRIORITY,
+                  task4_stk,
                   TASK_STACKSIZE,
                   NULL,
                   0);
