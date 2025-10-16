@@ -28,10 +28,10 @@ void task1(void* pdata)
   INT8U err;
   while (1)
   { 
-    OSSemPend(S1,0,err);
     for(int i=0; i<10; i++){
         OSSemPend(S1,0,err);
         IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
+        usleep(100);
         OSSemPost(S1); 
         OSTimeDlyHMSM(0, 0, 0, 500);   
     }  
@@ -44,14 +44,13 @@ void task2(void* pdata)
   INT8U err;
   while (1)
   {   
-    OSSemPend(S2,0,err);
     for(int i=10; i>0; i--){
         OSSemPend(S1,0,err);
         IOWR_ALTERA_AVALON_PIO_DATA(LEDS_BASE, (1 << i));
+        usleep(100);
         OSSemPost(S1); 
         OSTimeDlyHMSM(0, 0, 0, 500);
     }
-    OSSemPost(S1);
   }
   
 }
